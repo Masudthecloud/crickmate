@@ -3,29 +3,31 @@ import React from "react";
 function BattingTable({ battingStats }) {
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-semibold text-gray-700 mb-2">Batting Scorecard</h3>
-      <table className="w-full text-sm border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="py-1 px-2 text-left">Batsman</th>
-            <th className="py-1 px-2 text-right">R</th>
-            <th className="py-1 px-2 text-right">B</th>
-            <th className="py-1 px-2 text-right">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {battingStats.map((p, idx) => (
-            <tr key={idx} className="border-t">
-              <td className="py-1 px-2">{p.name}</td>
-              <td className="py-1 px-2 text-right">{p.runs}</td>
-              <td className="py-1 px-2 text-right">{p.balls}</td>
-              <td className="py-1 px-2 text-right">
-                {p.out ? "Out" : p.balls > 0 ? "Not Out" : "-"}
-              </td>
+      <h3 className="text-lg font-semibold mb-2 text-center">Batting Scorecard</h3>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm text-left border border-gray-300">
+          <thead className="bg-gray-200 text-gray-700">
+            <tr>
+              <th className="p-2 border">Batsman</th>
+              <th className="p-2 border text-center">Runs</th>
+              <th className="p-2 border text-center">Balls</th>
+              <th className="p-2 border text-center">Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {battingStats.map((player, idx) => (
+              <tr key={idx} className="border-t">
+                <td className="p-2 border">{player.name}</td>
+                <td className="p-2 border text-center">{player.runs}</td>
+                <td className="p-2 border text-center">{player.balls}</td>
+                <td className="p-2 border text-center">
+                  {player.out ? "Out" : "Not Out"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

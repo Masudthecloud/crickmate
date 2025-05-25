@@ -1,92 +1,135 @@
 import React, { useState } from "react";
 
 function SetupForm({ onStart }) {
-  const [teamA, setTeamA] = useState({ name: "", players: Array(11).fill("") });
-  const [teamB, setTeamB] = useState({ name: "", players: Array(11).fill("") });
-  const [error, setError] = useState("");
+  const [teamAName, setTeamAName] = useState("Team A");
+  const [teamBName, setTeamBName] = useState("Team B");
+  const [numPlayers, setNumPlayers] = useState(11);
+  const [numOvers, setNumOvers] = useState(20);
+  const [teamAPlayers, setTeamAPlayers] = useState(Array(11).fill(""));
+  const [teamBPlayers, setTeamBPlayers] = useState(Array(11).fill(""));
 
-  const handlePlayerChange = (team, index, value) => {
-    const updated = [...(team === "A" ? teamA.players : teamB.players)];
-    updated[index] = value;
-
-    team === "A"
-      ? setTeamA({ ...teamA, players: updated })
-      : setTeamB({ ...teamB, players: updated });
+  const handleNumPlayersChange = (e) => {
+    const count = parseInt(e.target.value, 10) || 0;
+    setNumPlayers(count);
+    setTeamAPlayers(Array(count).fill(""));
+    setTeamBPlayers(Array(count).fill(""));
   };
 
-  const handleSubmit = () => {
-    if (!teamA.name || !teamB.name) return setError("Both team names are required.");
-    if (teamA.players.some(p => !p) || teamB.players.some(p => !p)) {
-      return setError("All player names must be filled in.");
+  const handlePlayerNameChange = (team, index, value) => {
+    const setter = team === "A" ? setTeamAPlayers : setTeamBPlayers;
+    const current = team === "A" ? [...teamAPlayers] : [...teamBPlayers];
+    current[index] = value;
+    setter(current);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      teamAPlayers.some((p) => !p.trim()) ||
+      teamBPlayers.some((p) => !p.trim())
+    ) {
+      alert("Please fill in all player names.");
+      return;
     }
 
-    setError("");
-    onStart(teamA, teamB); // pass data to parent App
+    onStart(
+      { name: teamAName, players: teamAPlayers },
+      { name: teamBName, players: teamBPlayers },
+      numOvers
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-xl p-6 md:p-10">
-        <h2 className="text-2xl font-bold text-center text-indigo-600 mb-6">🏏 Match Setup</h2>
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+      <h2 className="text-2xl font-bold text-center mb-4 text-indigo-700">Match Setup</h2>
 
-        {error && <div className="text-red-500 text-sm mb-4 text-center">{error}</div>}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <input
+          type="text"
+          value={teamAName}
+          onChange={(e) => setTeamAName(e.target.value)}
+          className="p-2 border rounded"
+          placeholder="Team A Name"
+          required
+        />
+        <input
+          type="text"
+          value={teamBName}
+          onChange={(e) => setTeamBName(e.target.value)}
+          className="p-2 border rounded"
+          placeholder="Team B Name"
+          required
+        />
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Team A */}
-          <div>
-            <h3 className="text-lg font-semibold text-blue-600 mb-2">Team A (Batting First)</h3>
-            <input
-              type="text"
-              placeholder="Team A Name"
-              className="w-full mb-3 border p-2 rounded"
-              value={teamA.name}
-              onChange={(e) => setTeamA({ ...teamA, name: e.target.value })}
-            />
-            {teamA.players.map((p, i) => (
-              <input
-                key={i}
-                type="text"
-                className="w-full mb-2 border p-2 rounded text-sm"
-                placeholder={`Player ${i + 1}`}
-                value={p}
-                onChange={(e) => handlePlayerChange("A", i, e.target.value)}
-              />
-            ))}
-          </div>
-
-          {/* Team B */}
-          <div>
-            <h3 className="text-lg font-semibold text-red-600 mb-2">Team B (Bowling First)</h3>
-            <input
-              type="text"
-              placeholder="Team B Name"
-              className="w-full mb-3 border p-2 rounded"
-              value={teamB.name}
-              onChange={(e) => setTeamB({ ...teamB, name: e.target.value })}
-            />
-            {teamB.players.map((p, i) => (
-              <input
-                key={i}
-                type="text"
-                className="w-full mb-2 border p-2 rounded text-sm"
-                placeholder={`Player ${i + 1}`}
-                value={p}
-                onChange={(e) => handlePlayerChange("B", i, e.target.value)}
-              />
-            ))}
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Number of Players</label>
+          <input
+            type="number"
+            value={numPlayers}
+            min={2}
+            max={22}
+            onChange={handleNumPlayersChange}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
 
-        <div className="mt-6 text-center">
-          <button
-            onClick={handleSubmit}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-lg font-medium shadow-md"
-          >
-            🚀 Start Match
-          </button>
+        <div>
+          <label className="block mb-1 text-sm font-medium text-gray-700">Number of Overs</label>
+          <input
+            type="number"
+            value={numOvers}
+            min={1}
+            max={50}
+            onChange={(e) => setNumOvers(parseInt(e.target.value, 10))}
+            className="w-full p-2 border rounded"
+            required
+          />
         </div>
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-semibold text-gray-700 mb-2">{teamAName} Players</h3>
+          {teamAPlayers.map((name, idx) => (
+            <input
+              key={idx}
+              type="text"
+              value={name}
+              onChange={(e) => handlePlayerNameChange("A", idx, e.target.value)}
+              placeholder={`Player ${idx + 1}`}
+              className="w-full p-2 border rounded mb-2"
+              required
+            />
+          ))}
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-gray-700 mb-2">{teamBName} Players</h3>
+          {teamBPlayers.map((name, idx) => (
+            <input
+              key={idx}
+              type="text"
+              value={name}
+              onChange={(e) => handlePlayerNameChange("B", idx, e.target.value)}
+              placeholder={`Player ${idx + 1}`}
+              className="w-full p-2 border rounded mb-2"
+              required
+            />
+          ))}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded text-lg"
+      >
+        🏏 Start Match
+      </button>
+    </form>
   );
 }
 

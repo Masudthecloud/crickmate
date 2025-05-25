@@ -3,31 +3,31 @@ import React from "react";
 function BowlingTable({ bowlingStats, playerNames }) {
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-semibold text-gray-700 mb-2">Bowling Scorecard</h3>
-      <table className="w-full text-sm border">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="text-left px-2 py-1">Bowler</th>
-            <th className="text-right px-2 py-1">O</th>
-            <th className="text-right px-2 py-1">R</th>
-            <th className="text-right px-2 py-1">W</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bowlingStats.map((bowler, idx) =>
-            bowler.balls > 0 ? (
+      <h3 className="text-lg font-semibold mb-2 text-center">Bowling Scorecard</h3>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm text-left border border-gray-300">
+          <thead className="bg-gray-200 text-gray-700">
+            <tr>
+              <th className="p-2 border">Bowler</th>
+              <th className="p-2 border text-center">Overs</th>
+              <th className="p-2 border text-center">Runs</th>
+              <th className="p-2 border text-center">Wickets</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bowlingStats.map((bowler, idx) => (
               <tr key={idx} className="border-t">
-                <td className="px-2 py-1">{playerNames[idx]}</td>
-                <td className="px-2 py-1 text-right">
+                <td className="p-2 border">{playerNames[idx]}</td>
+                <td className="p-2 border text-center">
                   {Math.floor(bowler.balls / 6)}.{bowler.balls % 6}
                 </td>
-                <td className="px-2 py-1 text-right">{bowler.runsConceded}</td>
-                <td className="px-2 py-1 text-right">{bowler.wickets}</td>
+                <td className="p-2 border text-center">{bowler.runsConceded}</td>
+                <td className="p-2 border text-center">{bowler.wickets}</td>
               </tr>
-            ) : null
-          )}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
